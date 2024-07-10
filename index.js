@@ -2,6 +2,12 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDb from "./database/db.js";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // importing routes
 import userRoutes from "./routes/user.js";
@@ -28,6 +34,14 @@ app.use("/api", addressRoutes);
 app.use("/api", orderRoutes);
 
 app.use("/uploads", express.static("uploads")); //  this will help us to fetch image from server url
+
+
+if(process.env.NODE_ENV === "production"){
+ app.use(express.static(path.join(__dirname, "../e-commerce_fe/dist")))
+ app.get("*", (req,res)=>{
+  res.sendFile(path._resolve(__dirname, "../e-commerce_fe/dist/index.html"))
+ })
+}
 
 app.listen(port, () => {
   console.log(`App is running on the PORT:${port}`);
